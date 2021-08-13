@@ -1,8 +1,22 @@
-version: "3.3"
-services:
-    nginx:
-        build: 
-              context: ./
-              dockerfile: Dockerfiledcoek
-        ports:
-            - "8282:80"
+version: '3'
+services:        
+    influxdb:                
+      image: influxdb:1.7-alpine                
+      environment:                        
+        - INFLUXDB_DB=jmeter
+        - INFLUXDB_URL=http://influxdb:8086
+        - INFLUXDB_GRAPHITE_ENABLED=true
+      ports:
+        - "8086:8086"
+        - "2003:2003"
+      container_name: influxdb
+      volumes:
+        - ./influx:/var/lib/influxdb
+    grafana:
+      image: grafana/grafana                
+      ports:
+        - "3000:3000"                
+      depends_on:                        
+      - influxdb
+      volumes:
+        - ./grafana:/var/lib/grafana
